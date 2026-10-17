@@ -1,0 +1,17 @@
+services:
+  docker-hub:
+    build: .
+    container_name: docker-hub
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - docker-hub-data:/app/data
+    environment:
+      - NODE_ENV=production
+      - DOCKER_HUB_DB_DIR=/app/data
+      # Uncomment to override the session cookie secure flag for HTTP-only local testing
+      # - NODE_ENV=development
+
+volumes:
+  docker-hub-data:
