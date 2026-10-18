@@ -6,15 +6,17 @@ export const dynamic = 'force-dynamic';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authErr = requireAuth(req);
   if (authErr) return authErr;
 
+  const { id } = await params;
+
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
 
-  const ok = updateCategory(params.id, {
+  const ok = updateCategory(id, {
     name: body.name?.trim(),
     icon: body.icon,
     color: body.color,
@@ -25,12 +27,13 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authErr = requireAuth(req);
   if (authErr) return authErr;
 
-  const ok = deleteCategory(params.id);
+  const { id } = await params;
+  const ok = deleteCategory(id);
   if (!ok) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ success: true });
 }

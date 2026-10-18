@@ -6,20 +6,22 @@ export const dynamic = 'force-dynamic';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authErr = requireAuth(req);
   if (authErr) return authErr;
 
+  const { id } = await params;
+
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
 
-  const existing = getApplicationById(params.id);
+  const existing = getApplicationById(id);
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const updated = true;
   if (updated) {
-    updateApplication(params.id, {
+    updateApplication(id, {
       name: body.name?.trim() ?? existing.name,
       description: body.description ?? existing.description,
       public_url: body.public_url?.trim() ?? existing.public_url,
@@ -40,12 +42,13 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authErr = requireAuth(req);
   if (authErr) return authErr;
 
-  const deleted = deleteApplication(params.id);
+  const { id } = await params;
+  const deleted = deleteApplication(id);
   if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ success: true });
 }

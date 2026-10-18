@@ -21,7 +21,6 @@ export async function PUT(req: NextRequest) {
     monitoring_interval_seconds: body.monitoring_interval_seconds,
     retention_days: body.retention_days,
     check_timeout_ms: body.check_timeout_ms,
-    allowed_internal_hosts: body.allowed_internal_hosts,
   });
   return NextResponse.json({ success: true });
 }

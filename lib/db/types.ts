@@ -49,7 +49,6 @@ export type AppSettings = {
   monitoring_interval_seconds: number;
   retention_days: number;
   check_timeout_ms: number;
-  allowed_internal_hosts: string[];
   updated_at: string;
 };
 
@@ -73,8 +72,5 @@ export function rowToCheckResult(row: RawRow): CheckResult {
 }
 
 export function rowToSettings(row: RawRow): AppSettings {
-  return {
-    ...(row as object),
-    allowed_internal_hosts: JSON.parse(row.allowed_internal_hosts || '[]'),
-  } as AppSettings;
+  return row as unknown as AppSettings;
 }

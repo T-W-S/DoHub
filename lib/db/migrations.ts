@@ -71,7 +71,6 @@ export function runMigrations(db: Database): void {
           monitoring_interval_seconds INTEGER NOT NULL DEFAULT 300,
           retention_days INTEGER NOT NULL DEFAULT 30,
           check_timeout_ms INTEGER NOT NULL DEFAULT 10000,
-          allowed_internal_hosts TEXT NOT NULL DEFAULT '[]',
           updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
 
