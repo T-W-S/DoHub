@@ -5,9 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Save, Loader2, Plus, X, Shield, Clock, Trash2, Server } from 'lucide-react';
+import { Save, Loader2, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import type { AppSettings } from '@/lib/types';
 
@@ -15,7 +14,6 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [newHost, setNewHost] = useState('');
 
   useEffect(() => {
     fetch('/api/settings')
@@ -41,7 +39,6 @@ export default function SettingsPage() {
           monitoring_interval_seconds: settings.monitoring_interval_seconds,
           retention_days: settings.retention_days,
           check_timeout_ms: settings.check_timeout_ms,
-          allowed_internal_hosts: settings.allowed_internal_hosts,
         }),
       });
       const data = await res.json();
@@ -51,27 +48,6 @@ export default function SettingsPage() {
       toast.error(err.message);
     }
     setSaving(false);
-  };
-
-  const addHost = () => {
-    if (!newHost.trim() || !settings) return;
-    if (settings.allowed_internal_hosts.includes(newHost.trim())) {
-      toast.error('Host already in allowlist');
-      return;
-    }
-    setSettings({
-      ...settings,
-      allowed_internal_hosts: [...settings.allowed_internal_hosts, newHost.trim()],
-    });
-    setNewHost('');
-  };
-
-  const removeHost = (host: string) => {
-    if (!settings) return;
-    setSettings({
-      ...settings,
-      allowed_internal_hosts: settings.allowed_internal_hosts.filter((h) => h !== host),
-    });
   };
 
   if (loading || !settings) {
@@ -86,7 +62,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground">Configure monitoring and security settings</p>
+        <p className="text-sm text-muted-foreground">Configure monitoring settings</p>
       </div>
 
       <Card>
@@ -143,72 +119,6 @@ export default function SettingsPage() {
               <p className="text-xs text-muted-foreground">How long to keep history</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
-              <Shield className="h-5 w-5 text-warning" />
-            </div>
-            <div>
-              <CardTitle className="text-base font-semibold">Internal Host Allowlist</CardTitle>
-              <CardDescription>
-                Hostnames and IPs permitted for internal health checks (SSRF protection)
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Only hosts in this list can be reached by internal monitoring checks. This prevents the
-            dashboard from becoming an unrestricted network proxy. Hostnames that resolve to private
-            IP addresses (10.x, 172.16-31.x, 192.168.x, 127.x, ::1) must be in this list to be checked.
-          </p>
-
-          <div className="flex gap-2">
-            <Input
-              placeholder="e.g. internal-service, 192.168.1.10, myapp.local"
-              value={newHost}
-              onChange={(e) => setNewHost(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  addHost();
-                }
-              }}
-            />
-            <Button onClick={addHost} variant="outline">
-              <Plus className="mr-2 h-4 w-4" />
-              Add
-            </Button>
-          </div>
-
-          {settings.allowed_internal_hosts.length > 0 ? (
-            <div className="flex flex-wrap gap-2 rounded-lg border border-border/60 p-3">
-              {settings.allowed_internal_hosts.map((host) => (
-                <Badge
-                  key={host}
-                  variant="secondary"
-                  className="flex items-center gap-1 py-1 pl-3 pr-1"
-                >
-                  <Server className="h-3 w-3 text-muted-foreground" />
-                  {host}
-                  <button
-                    onClick={() => removeHost(host)}
-                    className="ml-1 rounded-full p-0.5 hover:bg-destructive/20 hover:text-destructive"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-lg border border-dashed border-border/60 p-4 text-center text-sm text-muted-foreground">
-              No internal hosts allowlisted yet. Add hostnames or IPs that internal monitoring should be allowed to reach.
-            </div>
-          )}
         </CardContent>
       </Card>
 

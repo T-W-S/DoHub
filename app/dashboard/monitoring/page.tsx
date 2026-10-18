@@ -36,8 +36,8 @@ export default function MonitoringPage() {
         fetch('/api/applications').then((r) => r.json()),
         fetch('/api/monitoring/results?limit=100').then((r) => r.json()),
       ]);
-      setApps(appsRes || []);
-      setResults(resultsRes || []);
+      setApps(Array.isArray(appsRes) ? appsRes : []);
+      setResults(Array.isArray(resultsRes) ? resultsRes : []);
     } catch {
       toast.error('Failed to load monitoring data');
     }

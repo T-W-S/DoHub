@@ -1,9 +1,10 @@
-FROM node:20-slim AS base
+FROM node:22-bookworm-slim AS base
 
 FROM base AS deps
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 FROM base AS builder
 WORKDIR /app
@@ -11,6 +12,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
+RUN mkdir -p /app/public
 
 FROM base AS runner
 WORKDIR /app

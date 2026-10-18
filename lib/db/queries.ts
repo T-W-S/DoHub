@@ -126,7 +126,6 @@ export function updateSettings(data: {
   monitoring_interval_seconds?: number;
   retention_days?: number;
   check_timeout_ms?: number;
-  allowed_internal_hosts?: string[];
 }): boolean {
   const db = getDb();
   const fields: string[] = [];
@@ -134,10 +133,8 @@ export function updateSettings(data: {
   if (data.monitoring_interval_seconds !== undefined) { fields.push('monitoring_interval_seconds = ?'); values.push(data.monitoring_interval_seconds); }
   if (data.retention_days !== undefined) { fields.push('retention_days = ?'); values.push(data.retention_days); }
   if (data.check_timeout_ms !== undefined) { fields.push('check_timeout_ms = ?'); values.push(data.check_timeout_ms); }
-  if (data.allowed_internal_hosts !== undefined) { fields.push('allowed_internal_hosts = ?'); values.push(JSON.stringify(data.allowed_internal_hosts)); }
   if (fields.length === 0) return false;
   fields.push("updated_at = datetime('now')");
-  values.push(1);
   const result = db.prepare(`UPDATE app_settings SET ${fields.join(', ')} WHERE id = 1`).run(...values);
   return result.changes > 0;
 }

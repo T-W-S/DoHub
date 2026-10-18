@@ -50,8 +50,8 @@ export default function CategoriesPage() {
         fetch('/api/categories').then((r) => r.json()),
         fetch('/api/applications').then((r) => r.json()),
       ]);
-      setCategories(catRes || []);
-      setApps(appsRes || []);
+      setCategories(Array.isArray(catRes) ? catRes : []);
+      setApps(Array.isArray(appsRes) ? appsRes : []);
     } catch {
       toast.error('Failed to load data');
     }
