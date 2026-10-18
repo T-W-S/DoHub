@@ -101,8 +101,8 @@ export default function ApplicationsPage() {
         fetch('/api/applications').then((r) => r.json()),
         fetch('/api/categories').then((r) => r.json()),
       ]);
-      setApps(appsRes || []);
-      setCategories(catRes || []);
+      setApps(Array.isArray(appsRes) ? appsRes : []);
+      setCategories(Array.isArray(catRes) ? catRes : []);
     } catch {
       toast.error('Failed to load data');
     }

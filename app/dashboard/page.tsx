@@ -29,8 +29,8 @@ export default function OverviewPage() {
       fetch('/api/categories').then((r) => r.json()),
     ])
       .then(([appsData, catData]) => {
-        setApps(appsData || []);
-        setCategories(catData || []);
+        setApps(Array.isArray(appsData) ? appsData : []);
+        setCategories(Array.isArray(catData) ? catData : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
