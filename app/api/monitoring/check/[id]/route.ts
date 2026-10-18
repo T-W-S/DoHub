@@ -8,12 +8,13 @@ export const maxDuration = 30;
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authErr = requireAuth(req);
   if (authErr) return authErr;
 
-  const app = getApplicationById(params.id);
+  const { id } = await params;
+  const app = getApplicationById(id);
   if (!app) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const settings = getSettings();
