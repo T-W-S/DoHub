@@ -38,7 +38,7 @@ export async function performHealthCheck(
     clearTimeout(timeoutId);
     const responseTimeMs = Date.now() - startTime;
 
-    // 2xx and 3xx (except redirects to private IPs) are "up"
+    // 2xx and 3xx are "up"
     // Redirects are not followed (redirect: manual), so 3xx means we stopped
     if (res.status >= 200 && res.status < 400) {
       return {
