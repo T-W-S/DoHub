@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import Database from 'better-sqlite3';
+import { describe, it, expect, vi } from 'vitest';
 import type { DB } from '@/lib/db';
-import { runMigrations } from '@/lib/db/migrations';
+import { setupInMemoryDb } from '../helpers/db';
 
 let testDb: DB;
 
@@ -20,16 +19,7 @@ import {
   cleanupExpiredSessions,
 } from '@/lib/auth';
 
-beforeEach(() => {
-  testDb = new Database(':memory:');
-  testDb.pragma('journal_mode = WAL');
-  testDb.pragma('foreign_keys = ON');
-  runMigrations(testDb);
-});
-
-afterEach(() => {
-  testDb.close();
-});
+setupInMemoryDb((db) => { testDb = db; });
 
 // ---------------------------------------------------------------------------
 // Admin management

@@ -1,16 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import Database from 'better-sqlite3';
+import { describe, it, expect, vi } from 'vitest';
 import type { DB } from '@/lib/db';
-import { runMigrations } from '@/lib/db/migrations';
+import { setupInMemoryDb } from '../../helpers/db';
 
-// Mock the db module so every call to getDb() returns our in-memory instance
 let testDb: DB;
 
 vi.mock('@/lib/db', () => ({
   getDb: () => testDb,
 }));
 
-// Import query functions *after* the mock is declared
 import {
   getAllApplications,
   getApplicationById,
@@ -29,16 +26,7 @@ import {
   getApplicationCount,
 } from '@/lib/db/queries';
 
-beforeEach(() => {
-  testDb = new Database(':memory:');
-  testDb.pragma('journal_mode = WAL');
-  testDb.pragma('foreign_keys = ON');
-  runMigrations(testDb);
-});
-
-afterEach(() => {
-  testDb.close();
-});
+setupInMemoryDb((db) => { testDb = db; });
 
 // ---------------------------------------------------------------------------
 // Applications
