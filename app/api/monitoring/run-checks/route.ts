@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-helpers';
 import { getAllApplications, getSettings, updateApplication, insertCheckResult, cleanupOldCheckResults } from '@/lib/db/queries';
 import { performHealthCheck } from '@/lib/health-check';
-import type { Application } from '@/lib/db/types';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -19,8 +18,6 @@ export async function POST(req: NextRequest) {
     if (app.public_monitoring_enabled && app.public_url) {
       const result = await performHealthCheck(app.public_url, {
         timeoutMs: settings.check_timeout_ms,
-        allowInternalHosts: settings.allowed_internal_hosts,
-        allowPrivateIPs: false,
       });
 
       const newFailureCount = result.status === 'down' ? app.consecutive_failures + 1 : 0;
@@ -49,8 +46,6 @@ export async function POST(req: NextRequest) {
     if (app.internal_monitoring_enabled && app.health_check_url) {
       const result = await performHealthCheck(app.health_check_url, {
         timeoutMs: settings.check_timeout_ms,
-        allowInternalHosts: settings.allowed_internal_hosts,
-        allowPrivateIPs: true,
       });
 
       updateApplication(app.id, {

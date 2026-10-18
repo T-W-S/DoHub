@@ -23,8 +23,6 @@ export async function POST(
   if (app.public_monitoring_enabled && app.public_url) {
     const result = await performHealthCheck(app.public_url, {
       timeoutMs: settings.check_timeout_ms,
-      allowInternalHosts: settings.allowed_internal_hosts,
-      allowPrivateIPs: false,
     });
 
     const newFailureCount = result.status === 'down' ? app.consecutive_failures + 1 : 0;
@@ -53,8 +51,6 @@ export async function POST(
   if (app.internal_monitoring_enabled && app.health_check_url) {
     const result = await performHealthCheck(app.health_check_url, {
       timeoutMs: settings.check_timeout_ms,
-      allowInternalHosts: settings.allowed_internal_hosts,
-      allowPrivateIPs: true,
     });
 
     updateApplication(app.id, {

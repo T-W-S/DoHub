@@ -50,6 +50,5 @@ export type AppSettings = {
   monitoring_interval_seconds: number;
   retention_days: number;
   check_timeout_ms: number;
-  allowed_internal_hosts: string[];
   updated_at: string;
 };
