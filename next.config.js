@@ -5,9 +5,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-  experimental: {
-    serverComponentsExternalPackages: ['better-sqlite3', 'bcryptjs'],
-  },
+  serverExternalPackages: ['better-sqlite3', 'bcryptjs'],
 };
 
 module.exports = nextConfig;
