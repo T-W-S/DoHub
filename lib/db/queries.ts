@@ -135,7 +135,6 @@ export function updateSettings(data: {
   if (data.check_timeout_ms !== undefined) { fields.push('check_timeout_ms = ?'); values.push(data.check_timeout_ms); }
   if (fields.length === 0) return false;
   fields.push("updated_at = datetime('now')");
-  values.push(1);
   const result = db.prepare(`UPDATE app_settings SET ${fields.join(', ')} WHERE id = 1`).run(...values);
   return result.changes > 0;
 }
